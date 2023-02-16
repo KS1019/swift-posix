@@ -13,8 +13,10 @@ let package = Package(
             dependencies: [
                 .product(name: "SystemPackage", package: "swift-system")
             ]),
-        .testTarget(
-            name: "catTests",
-            dependencies: ["cat"]),
+        .executableTarget(
+            name: "echo",
+            dependencies: [
+                .product(name: "SystemPackage", package: "swift-system")
+            ])
     ]
 )

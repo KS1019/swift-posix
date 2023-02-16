@@ -1,10 +1,7 @@
 import SystemPackage
 
 @main
-struct cat {
-    static func usage(progname: String) {
-        fatalError("Usage: \(progname) [ file ]")
-    }
+struct Cat {
     public static func main() throws {
         let argv = CommandLine.arguments
         let argc = CommandLine.arguments.count
@@ -13,7 +10,7 @@ struct cat {
         var fd: FileDescriptor = FileDescriptor.standardInput
 
         if argc != 2 {
-            usage(progname: argv[0])
+            fatalError("Usage: \(argv[0]) [ file ]")
         } else {
             do {
                 fd = try FileDescriptor.open(argv[1], .readOnly)
@@ -22,8 +19,10 @@ struct cat {
             }
 
             do {
-                let _ = try fd.read(into: buf)
-                let _ = try FileDescriptor.standardOutput.write(UnsafeRawBufferPointer(buf))
+                let bytes = try fd.read(into: buf)
+                try fd.close()
+                let _ = try FileDescriptor.standardOutput.writeAll(buf[..<bytes])
+                buf.deallocate()
             } catch {
                 fatalError("Error: \(error)")
             }
